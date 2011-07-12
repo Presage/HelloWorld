@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 public class HelloEnvironment extends AbstractEnvironment implements HasArea {
 
 	final private Logger logger = Logger.getLogger(HelloEnvironment.class);
-	
+
 	final private Area simArea;
 
 	@Inject
@@ -32,9 +32,13 @@ public class HelloEnvironment extends AbstractEnvironment implements HasArea {
 			EnvironmentRegistrationRequest request) {
 		final Set<EnvironmentService> services = new HashSet<EnvironmentService>();
 		try {
-			services.add(new ParticipantLocationService(request.getParticipant(), this, this));
-		} catch(SharedStateAccessException e) {
-			logger.warn("Unable to add ParticipantLocationService to services for participant "+ request.getParticipantID() +", error accessing shared state.", e);
+			services.add(new ParticipantLocationService(request
+					.getParticipant(), this, this));
+		} catch (SharedStateAccessException e) {
+			logger.warn(
+					"Unable to add ParticipantLocationService to services for participant "
+							+ request.getParticipantID()
+							+ ", error accessing shared state.", e);
 		}
 		return services;
 	}
