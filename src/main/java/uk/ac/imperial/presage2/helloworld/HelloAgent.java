@@ -14,7 +14,6 @@ import uk.ac.imperial.presage2.core.messaging.Input;
 import uk.ac.imperial.presage2.core.network.NetworkAddress;
 import uk.ac.imperial.presage2.core.util.random.Random;
 import uk.ac.imperial.presage2.util.environment.CommunicationRangeService;
-import uk.ac.imperial.presage2.util.location.Discrete2DLocation;
 import uk.ac.imperial.presage2.util.location.HasLocation;
 import uk.ac.imperial.presage2.util.location.Location;
 import uk.ac.imperial.presage2.util.location.Move;
@@ -126,9 +125,7 @@ public class HelloAgent extends AbstractParticipant implements HasLocation,
 		}
 
 		// random movement
-		Move move = this.state.loc.getMoveTo(
-				new Discrete2DLocation(Random.randomInt(50), Random
-						.randomInt(50)), 5);
+		Move move = this.state.loc.getMoveTo(new Location(Random.randomInt(50), Random.randomInt(50)), 5);
 
 		logger.info("Attempting move: " + move);
 

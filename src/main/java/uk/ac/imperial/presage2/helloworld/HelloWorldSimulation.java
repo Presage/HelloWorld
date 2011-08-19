@@ -9,8 +9,8 @@ import uk.ac.imperial.presage2.core.simulator.InjectedSimulation;
 import uk.ac.imperial.presage2.core.simulator.Parameter;
 import uk.ac.imperial.presage2.core.simulator.Scenario;
 import uk.ac.imperial.presage2.core.util.random.Random;
-import uk.ac.imperial.presage2.util.location.Area;
-import uk.ac.imperial.presage2.util.location.Discrete2DLocation;
+import uk.ac.imperial.presage2.util.location.Location;
+import uk.ac.imperial.presage2.util.location.area.Area;
 
 import com.google.inject.AbstractModule;
 
@@ -45,7 +45,7 @@ public class HelloWorldSimulation extends InjectedSimulation {
 	protected void addToScenario(Scenario s) {
 		for (int i = 0; i < agentCount; i++) {
 			Participant p = new HelloAgent(Random.randomUUID(), "helloagent"
-					+ i, new Discrete2DLocation(Random.randomInt(xSize),
+					+ i, new Location(Random.randomInt(xSize),
 					Random.randomInt(ySize)), 10, 10);
 			getInjector().injectMembers(p);
 			s.addParticipant(p);

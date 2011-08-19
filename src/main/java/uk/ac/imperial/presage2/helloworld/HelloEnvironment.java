@@ -9,9 +9,9 @@ import uk.ac.imperial.presage2.core.environment.EnvironmentRegistrationRequest;
 import uk.ac.imperial.presage2.core.environment.EnvironmentService;
 import uk.ac.imperial.presage2.core.environment.SharedStateAccessException;
 import uk.ac.imperial.presage2.util.environment.AbstractEnvironment;
-import uk.ac.imperial.presage2.util.location.Area;
-import uk.ac.imperial.presage2.util.location.HasArea;
 import uk.ac.imperial.presage2.util.location.ParticipantLocationService;
+import uk.ac.imperial.presage2.util.location.area.Area;
+import uk.ac.imperial.presage2.util.location.area.HasArea;
 
 import com.google.inject.Inject;
 
