@@ -41,7 +41,7 @@ public class HelloModule extends AbstractModule {
 		// install constrained network
 		Set<Class<? extends NetworkConstraint>> constaints = new HashSet<Class<? extends NetworkConstraint>>();
 		constaints.add(NetworkRangeConstraint.class);
-		install(NetworkModule.constrainedNetworkModule(constaints)
+		install(NetworkModule.fullyConnectedNetworkModule()
 				.withNodeDiscovery());
 
 		// plugins

@@ -32,6 +32,14 @@
 		</dependency>
 	</dependencies>
 
+	<repositories>
+		<repository>
+			<id>presage</id>
+			<name>Presage Repository</name>
+			<url>http://ee-sm1106.ee.ic.ac.uk:8080/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -49,7 +57,7 @@
 				<version>1.1</version>
 				<configuration>
 					<argument>-classpath</argument>
-					<classpath/>
+					<classpath />
 				</configuration>
 			</plugin>
 

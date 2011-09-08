@@ -21,15 +21,16 @@ import uk.ac.imperial.presage2.util.location.ParticipantLocationService;
 import uk.ac.imperial.presage2.util.participant.AbstractParticipant;
 import uk.ac.imperial.presage2.util.participant.HasCommunicationRange;
 import uk.ac.imperial.presage2.util.participant.HasPerceptionRange;
+import uk.ac.imperial.presage2.util.protocols.Protocol;
 
 /**
  * @author Sam Macbeth
  * 
  */
-public class HelloAgent extends AbstractParticipant implements HasLocation,
-		HasPerceptionRange, HasCommunicationRange {
+public class HelloAgent extends AbstractParticipant implements HasLocation, HasPerceptionRange,
+		HasCommunicationRange {
 
-	class State {
+	class AgentState {
 
 		Location loc;
 
@@ -39,12 +40,14 @@ public class HelloAgent extends AbstractParticipant implements HasLocation,
 
 	}
 
-	private State state = new State();
+	private AgentState state = new AgentState();
 
 	private ParticipantLocationService locationService;
 
-	public HelloAgent(UUID id, String name, Location loc,
-			double perceptionRange, double communicationRange) {
+	Protocol helloWorld;
+
+	public HelloAgent(UUID id, String name, Location loc, double perceptionRange,
+			double communicationRange) {
 		super(id, name);
 		state.loc = loc;
 		state.perceptionRange = perceptionRange;
@@ -55,12 +58,13 @@ public class HelloAgent extends AbstractParticipant implements HasLocation,
 	public void initialise() {
 		super.initialise();
 		try {
-			this.locationService = this
-					.getEnvironmentService(ParticipantLocationService.class);
+			this.locationService = this.getEnvironmentService(ParticipantLocationService.class);
 		} catch (UnavailableServiceException e) {
 			logger.warn(e);
 			this.locationService = null;
 		}
+		// add hello world protocol
+		helloWorld = new HelloWorldProtocol(this.getName(), network);
 	}
 
 	public double getCommunicationRange() {
@@ -81,10 +85,8 @@ public class HelloAgent extends AbstractParticipant implements HasLocation,
 
 	@Override
 	protected void processInput(Input in) {
-		if (in instanceof HelloMessage) {
-			HelloMessage m = (HelloMessage) in;
-			logger.info(m.getFrom().getId()
-					+ " sent me a HelloMessage, how nice!");
+		if (helloWorld.canHandle(in)) {
+			helloWorld.handle(in);
 		}
 	}
 
@@ -106,26 +108,26 @@ public class HelloAgent extends AbstractParticipant implements HasLocation,
 		logger.info("My location is: " + this.getLocation());
 
 		// observe nearby agents
-		for (Map.Entry<UUID, Location> agent : this.locationService
-				.getNearbyAgents().entrySet()) {
-			logger.info("I see agent: " + agent.getKey() + " at location: "
-					+ agent.getValue());
+		for (Map.Entry<UUID, Location> agent : this.locationService.getNearbyAgents().entrySet()) {
+			logger.info("I see agent: " + agent.getKey() + " at location: " + agent.getValue());
 		}
 
 		// find who I'm connected to
 		try {
+			Set<NetworkAddress> alreadyTalkingTo = helloWorld.getActiveConversationMembers();
 			for (NetworkAddress a : this.network.getConnectedNodes()) {
 				logger.info("I'm connected to: " + a);
-				// say hello
-				this.network.sendMessage(new HelloMessage(this.network
-						.getAddress(), a, getTime()));
+				// spawn a conversation if I'm not already taking them them
+				if(!alreadyTalkingTo.contains(a))
+					helloWorld.spawn(a);
 			}
 		} catch (UnsupportedOperationException e) {
 			logger.warn("Can't get connected nodes", e);
 		}
 
 		// random movement
-		Move move = this.state.loc.getMoveTo(new Location(Random.randomInt(50), Random.randomInt(50)), 5);
+		Move move = this.state.loc.getMoveTo(
+				new Location(Random.randomInt(50), Random.randomInt(50)), 5);
 
 		logger.info("Attempting move: " + move);
 
