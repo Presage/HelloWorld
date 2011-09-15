@@ -18,17 +18,17 @@
 		<dependency>
 			<groupId>uk.ac.imperial.presage2</groupId>
 			<artifactId>presage2-core</artifactId>
-			<version>0.2.4-SNAPSHOT</version>
+			<version>0.2.4</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.ac.imperial.presage2</groupId>
 			<artifactId>presage2-util</artifactId>
-			<version>0.2.4-SNAPSHOT</version>
+			<version>0.2.4</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.ac.imperial.presage2</groupId>
 			<artifactId>presage2-db</artifactId>
-			<version>0.2.4-SNAPSHOT</version>
+			<version>0.2.4</version>
 		</dependency>
 	</dependencies>
 
