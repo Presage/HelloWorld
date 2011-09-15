@@ -18,6 +18,7 @@ import uk.ac.imperial.presage2.util.location.HasLocation;
 import uk.ac.imperial.presage2.util.location.Location;
 import uk.ac.imperial.presage2.util.location.Move;
 import uk.ac.imperial.presage2.util.location.ParticipantLocationService;
+import uk.ac.imperial.presage2.util.location.area.AreaService;
 import uk.ac.imperial.presage2.util.participant.AbstractParticipant;
 import uk.ac.imperial.presage2.util.participant.HasCommunicationRange;
 import uk.ac.imperial.presage2.util.participant.HasPerceptionRange;
@@ -44,6 +45,8 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 
 	private ParticipantLocationService locationService;
 
+	private AreaService areaService;
+
 	Protocol helloWorld;
 
 	public HelloAgent(UUID id, String name, Location loc, double perceptionRange,
@@ -59,6 +62,7 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 		super.initialise();
 		try {
 			this.locationService = this.getEnvironmentService(ParticipantLocationService.class);
+			this.areaService = this.getEnvironmentService(AreaService.class);
 		} catch (UnavailableServiceException e) {
 			logger.warn(e);
 			this.locationService = null;
@@ -118,7 +122,7 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 			for (NetworkAddress a : this.network.getConnectedNodes()) {
 				logger.info("I'm connected to: " + a);
 				// spawn a conversation if I'm not already taking them them
-				if(!alreadyTalkingTo.contains(a))
+				if (!alreadyTalkingTo.contains(a))
 					helloWorld.spawn(a);
 			}
 		} catch (UnsupportedOperationException e) {
@@ -127,7 +131,8 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 
 		// random movement
 		Move move = this.state.loc.getMoveTo(
-				new Location(Random.randomInt(50), Random.randomInt(50)), 5);
+				new Location(Random.randomInt(this.areaService.getSizeX()), Random
+						.randomInt(this.areaService.getSizeY())), 5);
 
 		logger.info("Attempting move: " + move);
 
