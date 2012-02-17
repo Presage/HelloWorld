@@ -5,14 +5,14 @@
 	<groupId>uk.ac.imperial.presage2</groupId>
 	<artifactId>helloworld</artifactId>
 	<version>develop-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>Hello World</name>
 	<url>http://github.com/Presage/HelloWorld</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<presage.version>0.3.0</presage.version>
+		<presage.version>0.3.1-SNAPSHOT</presage.version>
 	</properties>
 
 	<dependencies>
@@ -25,6 +25,17 @@
 			<groupId>uk.ac.imperial.presage2</groupId>
 			<artifactId>presage2-util</artifactId>
 			<version>${presage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.ac.imperial.presage2</groupId>
+			<artifactId>presage2-mongodb</artifactId>
+			<version>${presage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.ac.imperial.presage2</groupId>
+			<artifactId>presage2-webapp</artifactId>
+			<version>${presage.version}</version>
+			<type>war</type>
 		</dependency>
 	</dependencies>
 
@@ -54,6 +65,16 @@
 				<configuration>
 					<argument>-classpath</argument>
 					<classpath />
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.26</version>
+				<configuration>
+					<webAppConfig>
+						<contextPath>/</contextPath>
+					</webAppConfig>
 				</configuration>
 			</plugin>
 		</plugins>
