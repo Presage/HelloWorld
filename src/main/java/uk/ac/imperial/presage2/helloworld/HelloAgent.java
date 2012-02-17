@@ -28,8 +28,8 @@ import uk.ac.imperial.presage2.util.protocols.Protocol;
  * @author Sam Macbeth
  * 
  */
-public class HelloAgent extends AbstractParticipant implements HasLocation, HasPerceptionRange,
-		HasCommunicationRange {
+public class HelloAgent extends AbstractParticipant implements HasLocation,
+		HasPerceptionRange, HasCommunicationRange {
 
 	class AgentState {
 
@@ -49,8 +49,8 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 
 	Protocol helloWorld;
 
-	public HelloAgent(UUID id, String name, Location loc, double perceptionRange,
-			double communicationRange) {
+	public HelloAgent(UUID id, String name, Location loc,
+			double perceptionRange, double communicationRange) {
 		super(id, name);
 		state.loc = loc;
 		state.perceptionRange = perceptionRange;
@@ -61,7 +61,8 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 	public void initialise() {
 		super.initialise();
 		try {
-			this.locationService = this.getEnvironmentService(ParticipantLocationService.class);
+			this.locationService = this
+					.getEnvironmentService(ParticipantLocationService.class);
 			this.areaService = this.getEnvironmentService(AreaService.class);
 		} catch (UnavailableServiceException e) {
 			logger.warn(e);
@@ -83,10 +84,6 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 		return state.loc;
 	}
 
-	public void setLocation(Location l) {
-		this.state.loc = l;
-	}
-
 	@Override
 	protected void processInput(Input in) {
 		if (helloWorld.canHandle(in)) {
@@ -95,47 +92,71 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 	}
 
 	@Override
-	protected Set<ParticipantSharedState<?>> getSharedState() {
-		Set<ParticipantSharedState<?>> ss = super.getSharedState();
+	protected Set<ParticipantSharedState> getSharedState() {
+		Set<ParticipantSharedState> ss = super.getSharedState();
 		// shared state for ParticipantLocationService
-		ss.add(ParticipantLocationService.createSharedState(this.getID(), this));
+		ss.add(ParticipantLocationService.createSharedState(this.getID(),
+				this.getLocation()));
 		// shared state for network communication range
-		ss.add(CommunicationRangeService.createSharedState(getID(), this));
+		ss.add(CommunicationRangeService.createSharedState(getID(),
+				this.getCommunicationRange()));
 
 		return ss;
 	}
 
+	Location target;
+
 	@Override
 	public void execute() {
+		// timeout protocols
+		helloWorld.incrementTime();
+		// update my location
+		setLocation(locationService.getAgentLocation(getID()));
 		super.execute();
 
 		logger.info("My location is: " + this.getLocation());
 
 		// observe nearby agents
-		for (Map.Entry<UUID, Location> agent : this.locationService.getNearbyAgents().entrySet()) {
-			logger.info("I see agent: " + agent.getKey() + " at location: " + agent.getValue());
+		for (Map.Entry<UUID, Location> agent : this.locationService
+				.getNearbyAgents().entrySet()) {
+			logger.info("I see agent: " + agent.getKey() + " at location: "
+					+ agent.getValue());
 		}
 
 		// find who I'm connected to
 		try {
-			Set<NetworkAddress> alreadyTalkingTo = helloWorld.getActiveConversationMembers();
+			Set<NetworkAddress> alreadyTalkingTo = helloWorld
+					.getActiveConversationMembers();
+			int convCount = alreadyTalkingTo.size();
 			for (NetworkAddress a : this.network.getConnectedNodes()) {
 				logger.info("I'm connected to: " + a);
 				// spawn a conversation if I'm not already taking them them
-				if (!alreadyTalkingTo.contains(a))
+				// (limit 5 convs)
+				if (!alreadyTalkingTo.contains(a) && convCount < 5) {
 					helloWorld.spawn(a);
+					convCount++;
+				}
 			}
 		} catch (UnsupportedOperationException e) {
 			logger.warn("Can't get connected nodes", e);
 		}
 
-		// random movement
-		Move move = this.state.loc.getMoveTo(
-				new Location(Random.randomInt(this.areaService.getSizeX()), Random
-						.randomInt(this.areaService.getSizeY())), 5);
+		// reset target location if I am within 5 of it.
+		if (target != null && target.distanceTo(getLocation()) < 5) {
+			target = null;
+		}
+		// create a target location if I don't have one.
+		if (target == null) {
+			target = new Location(
+					Random.randomInt(this.areaService.getSizeX()),
+					Random.randomInt(this.areaService.getSizeY()));
+		}
+		// move towards this target location
+		Move move = this.getLocation().getMoveTo(target, 5);
 
 		logger.info("Attempting move: " + move);
 
+		// submit move action to the environment.
 		try {
 			environment.act(move, getID(), authkey);
 		} catch (ActionHandlingException e) {
@@ -143,4 +164,8 @@ public class HelloAgent extends AbstractParticipant implements HasLocation, HasP
 		}
 	}
 
+	@Override
+	public void setLocation(Location l) {
+		this.state.loc = l;
+	}
 }

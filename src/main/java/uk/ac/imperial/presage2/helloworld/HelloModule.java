@@ -13,7 +13,6 @@ import uk.ac.imperial.presage2.util.location.LocationStoragePlugin;
 import uk.ac.imperial.presage2.util.location.MoveHandler;
 import uk.ac.imperial.presage2.util.location.area.AreaService;
 import uk.ac.imperial.presage2.util.location.area.HasArea;
-import uk.ac.imperial.presage2.util.network.NetworkMessageMonitor;
 import uk.ac.imperial.presage2.util.network.NetworkModule;
 import uk.ac.imperial.presage2.util.network.NetworkRangeConstraint;
 
@@ -36,19 +35,19 @@ public class HelloModule extends AbstractModule {
 		// install abstract environment module
 		install(new AbstractEnvironmentModule(HelloEnvironment.class,
 				environmentServices, actionHandlers));
-		bind(HasArea.class).to(HelloEnvironment.class); // bind area for handlers/services
+		// bind area for handlers/services
+		bind(HasArea.class).to(HelloEnvironment.class);
 
 		// install constrained network
 		Set<Class<? extends NetworkConstraint>> constaints = new HashSet<Class<? extends NetworkConstraint>>();
 		constaints.add(NetworkRangeConstraint.class);
-		install(NetworkModule.fullyConnectedNetworkModule()
+		install(NetworkModule.constrainedNetworkModule(constaints)
 				.withNodeDiscovery());
 
 		// plugins
 		Multibinder<Plugin> pluginBinder = Multibinder.newSetBinder(binder(),
 				Plugin.class);
 		pluginBinder.addBinding().to(LocationStoragePlugin.class);
-		pluginBinder.addBinding().to(NetworkMessageMonitor.class);
 
 	}
 

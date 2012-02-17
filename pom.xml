@@ -12,23 +12,19 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<presage.version>0.3.0</presage.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>uk.ac.imperial.presage2</groupId>
 			<artifactId>presage2-core</artifactId>
-			<version>0.2.4</version>
+			<version>${presage.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.ac.imperial.presage2</groupId>
 			<artifactId>presage2-util</artifactId>
-			<version>0.2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>uk.ac.imperial.presage2</groupId>
-			<artifactId>presage2-db</artifactId>
-			<version>0.2.4</version>
+			<version>${presage.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -36,7 +32,7 @@
 		<repository>
 			<id>presage</id>
 			<name>Presage Repository</name>
-			<url>http://ee-sm1106.ee.ic.ac.uk:8080/nexus/content/groups/public/</url>
+			<url>http://dev.presage2.info/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 
@@ -60,7 +56,6 @@
 					<classpath />
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 
