@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<presage.version>0.3.1-SNAPSHOT</presage.version>
+		<presage.version>0.3.2</presage.version>
 	</properties>
 
 	<dependencies>
