@@ -106,6 +106,7 @@ public class HelloAgent extends AbstractParticipant implements HasLocation,
 
 	Location target;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void execute() {
 		// timeout protocols
